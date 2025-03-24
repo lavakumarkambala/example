@@ -1,2 +1,16 @@
+<ColumnDef columnName="g7Materail" filterable="true" hidden="false" objectType="WorkspaceObject" propertyName="g7Materail" width="250"/>
+
 https://www.vecteezy.com/free-svg/high-resolution
 https://www.iloveimg.com/resize-image/resize-svg#resize-options,pixels
+
+
+Item type="Item"
+        "TcStatus" : ItemRevision.release_status_list.name /description="Release Status"
+        "ApprovedBy" : ItemRevision.Job.SIGNOFF(Approver).group_member.user.user_name /master=iman /description="Signoff Approver"
+        "ApprovedDate" : ItemRevision.Job.SIGNOFF(Approver).decision_date /master=iman /description="Signoff Date Approver"
+        "ECNApprovedBy" : ItemRevision.Job.SIGNOFF(ECN_Approver).group_member.user.user_name /master=iman /description="Signoff ECN Approver"
+        "ECNApprovedDate" : ItemRevision.Job.SIGNOFF(ECN_Approver).decision_date /master=iman /description="Signoff Date ECN Approver"
+
+    }
+
+TCStatus" : ItemRevision.release_status_list.name /master=iman /description="Release Status"
