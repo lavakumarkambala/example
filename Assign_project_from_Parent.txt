@@ -1,0 +1,62 @@
+//@<COPYRIGHT>@
+//==================================================
+//Copyright $2025.
+//Siemens Product Lifecycle Management Software Inc.
+//All Rights Reserved.
+//==================================================
+//@<COPYRIGHT>@
+
+/* 
+ * @file 
+ *
+ *   This file contains the implementation for the Extension X9BomAssignProjectToChild
+ *
+ */
+#include <X9KPCLCore/X9BomAssignProjectToChild.hxx>
+//using namespace TEAMCENTER;
+
+int X9BomAssignProjectToChild( METHOD_message_t * msg, va_list args )
+{
+ int status;
+ 
+ tag_t parentLine = va_arg( largs, tag_t );
+ tag_t ChildItem   = va_arg( largs, tag_t );
+
+
+char * owningGroup = NULL;
+
+ //scoped_smptr<char> owningGroup;
+
+ status = AOM_ask_value_string(parentLine, "bl_rev_owning_group", &owningGroup);
+
+
+ //Read Arg
+ char * prefName = TC_next_argument(msg->user_args);
+
+ int prefCount = 0;
+ char **prefValues = NULL;
+ status = PREF_ask_char_values(prefName, &prefCount, &prefValues);
+
+	for (int i=0; i<prefCount; i++)
+	{
+		char * groupID=tc_strtok(prefValues[i],";");
+		char * projID=tc_strtok(NILL,";");
+
+		if(tc_strcmp(groupID,owningGroup)==0)
+		{
+			tag_t project= NULLTAG;
+			status = PROJ_find(projID, &project);
+
+			statu = PROJ_assign_objects(1, project, 1, ChildItem);
+			break;
+		}
+
+		if(prefValues)
+			MEM_free(prefValues);
+		if(owningGroup)
+					MEM_free(owningGroup);
+	}
+
+ return status;
+
+}
