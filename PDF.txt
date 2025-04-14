@@ -1,0 +1,74 @@
+#include<conio.h>
+#include<stdio.h>
+#include<tc/tc_startup.h>
+#include<tccore/custom.h>
+#include<epm/epm.h>
+#include<pom/pom/pom.h>
+#include<tccore/aom_prop.h>
+#include<tccore/grm.h>
+
+extern "C"
+{
+	int __declspec(dllexport) ProjectPDF_register_callbacks();
+}
+
+int registerMGExt(int*, va_list);
+EPM_decision_t MGCheckPDF(EPM_rule_message_t msg);
+
+
+#include"Header7.hxx"
+
+#define printError(x) if(x!=ITK_ok) { char* errorText = NULL; EMH_ask_error_text(x,&errorText); printf("\n \n %s", errorText); if (errorText) MEM_free(errorText);}
+#define PDF_ERROR 919051
+int ProjectPDF_register_callbacks()
+{
+	printf("\n DLL LOADEDD...\n");
+	printError(CUSTOM_register_exit("ProjectPDF", "USER_init_module", (CUSTOM_EXIT_ftn_t)registerMGExt));
+	return 0;
+}
+int registerMGExt(int*, va_list)
+{
+	printf("\n ProjectPDF extension registered...\n");
+	printError(EPM_register_rule_handler("MG CHECK PDF",
+		"this handler is to check PDF", (EPM_rule_handler_t)MGCheckPDF));
+	return 0;
+}
+EPM_decision_t MGCheckPDF(EPM_rule_message_t msg)
+{
+	EPM_decision_t decision = EPM_nogo;
+	int count = 0;
+	tag_t root_task = msg.task;
+	tag_t* attachments = NULL;
+	int record = 0;
+	printError(EPM_ask_attachments(root_task, EPM_target_attachment, &count, &attachments));
+	char* userID = NULL;
+	for (int i = 0; i < count; i++)
+	{
+		char* value = NULL;
+		int countt = 0;
+		tag_t* secondary_objects;
+		(GRM_list_secondary_objects_only(attachments[i], NULLTAG, &countt, &secondary_objects));
+		for (int j = 0; j < countt; j++)
+		{
+			printError(AOM_ask_value_string(secondary_objects[j], "object_type", &value));
+			if (tc_strcmp(value, "PDF") == 0)
+			{
+				record++;
+			}
+		}
+		if (secondary_objects) MEM_free(secondary_objects);
+	}
+	if (count == record)
+	{
+		decision = EPM_go;
+	}
+	if (decision == 0)
+	{
+		printError(POM_get_user_id(&userID));
+		printError(EMH_store_error_s1(EMH_severity_error, PDF_ERROR, userID));
+		printError(PDF_ERROR);
+	}
+	if (attachments) MEM_free(attachments);
+	//if (userID) MEM_free(userID);
+	return decision;
+}

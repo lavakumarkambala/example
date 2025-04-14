@@ -1,5 +1,83 @@
-new branch added
-add again on new branch
-added line 3git st
-4th line modified
-added 5th line in new branch
+<ColumnDef columnName="g7Materail" filterable="true" hidden="false" objectType="WorkspaceObject" propertyName="g7Materail" width="250"/>
+
+https://www.vecteezy.com/free-svg/high-resolution
+https://www.iloveimg.com/resize-image/resize-svg#resize-options,pixels
+
+
+Item type="Item"
+        "TcStatus" : ItemRevision.release_status_list.name /description="Release Status"
+        "ApprovedBy" : ItemRevision.Job.SIGNOFF(Approver).group_member.user.user_name /master=iman /description="Signoff Approver"
+        "ApprovedDate" : ItemRevision.Job.SIGNOFF(Approver).decision_date /master=iman /description="Signoff Date Approver"
+        "ECNApprovedBy" : ItemRevision.Job.SIGNOFF(ECN_Approver).group_member.user.user_name /master=iman /description="Signoff ECN Approver"
+        "ECNApprovedDate" : ItemRevision.Job.SIGNOFF(ECN_Approver).decision_date /master=iman /description="Signoff Date ECN Approver"
+
+    }
+
+TCStatus" : ItemRevision.release_status_list.name /master=iman /description="Release Status"
+==========================
+Property Name = T5TLPartType
+
+#define _CRT_SECURE_NO_WARNING
+#include<tc/tc_startup.h>
+#include<tcinit/tcinit.h>
+#include<conio.h>
+#include<tccore/tctype.h>
+#include<tccore/aom_prop.h>
+#include<tccore/aom.h>
+#include<sa/user.h>
+#include<tc/folder.h>
+#include<tccore/item.h>
+#include<tccore/grm.h>
+#include<ae/dataset.h>
+#include<tccore/aom.h>
+int createitem(char* userID);
+
+
+#include"Header.hxx"
+int ITK_user_main(int argc, char** argv)
+{
+	int status = ITK_ok;
+	char* u = ITK_ask_cli_argument("-u=");
+	char* p = ITK_ask_cli_argument("-p=");
+	char* g = ITK_ask_cli_argument("-g=");
+	status = ITK_init_module(u, p, g);
+	if (status == ITK_ok)
+	{
+		printf("\n\tLOGIN SUCCESS");
+		createitem(u);
+	}
+	else {
+		printf("\n\tLOGIN FAILED");
+	}
+	(void)_getch();
+	return ITK_ok;
+}
+int ItemCreatedata()
+{
+	int status = ITK_ok;
+		tag_t creInputTag, boTag, boTypeTag;
+		tag_t user_tag, homefolder,rev;
+		status = TCTYPE_find_type("T5LTPart", "T5LTPart", &boTypeTag);
+		status = TCTYPE_construct_create_input(boTypeTag, &creInputTag);
+		status = AOM_set_value_string(creInputTag, "item_id", "2712");
+		status = AOM_set_value_string(creInputTag, "object_name", "LT2712");
+		status = TCTYPE_create_object(creInputTag, &boTag);
+		status = AOM_save_with_extensions(boTag);
+		status = ITEM_ask_latest_rev(boTag, &rev);
+		status = AOM_set_value_string(creInputTag, "item_id", "2712");
+		status = AOM_set_value_string(creInputTag, "object_name", "LT2712");
+		status = SA_find_user2("infodba", &user_tag);
+		status = SA_ask_user_home_folder(user_tag, &homefolder);
+		status = FL_insert(homefolder, boTag, 999);
+		status = AOM_save_with_extensions(homefolder);
+		if (status == ITK_ok)
+		{
+			printf("Item created successfully \n");
+		}
+		else
+		{
+			printf("Item not created");
+		}
+================================
+C:\SPLM\Teamcenter14\TR\include\unidefs.h(155): fatal error C1083: Cannot open include file: 'stddef.h': No such file or directory
+libx9kpclcoreinitializemodule.cxx
